@@ -17,6 +17,10 @@ body {
   justify-content: center;
   height: 100vh;
   padding: 20px;
+  background: #1c1c1c;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  margin: 20px;
 }
 
 h1 {
@@ -161,7 +165,10 @@ button:hover {
 /* Mobile view adjustments */
 @media (max-width: 600px) {
   .start-screen, .player-role-screen, .score-screen, .board-screen, .reveal-screen {
-    padding: 10px;
+    padding: 15px;
+    margin: 10px;
+    height: auto;
+    box-shadow: none;
   }
 
   h1 {
@@ -198,6 +205,8 @@ button:hover {
 
   .score-item {
     padding: 8px 16px;
+    margin: 5px 0;
+    width: 90%;
   }
 
   .score-item span {
@@ -237,6 +246,8 @@ button:hover {
 
   .score-item {
     padding: 6px 12px;
+    margin: 5px 0;
+    width: 90%;
   }
 
   .score-item span {
