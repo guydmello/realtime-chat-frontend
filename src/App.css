@@ -1,38 +1,152 @@
+body {
+  background-color: #121212;
+  color: #ffffff;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
 .App {
   text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.start-screen, .player-role-screen, .score-screen, .board-screen, .reveal-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  height: 100vh;
+  padding: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+h1 {
+  font-size: 4em;
+  margin-bottom: 20px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.player-slider, .score-list, .board, .reveal-list {
+  margin-top: 20px;
+}
+
+.player-slider label {
+  font-size: 1.5em;
+}
+
+.player-slider input[type=range] {
+  width: 80%;
+  margin-top: 10px;
+}
+
+.board {
+  display: grid;
+  gap: 10px;
+  margin: 20px;
+}
+
+.board-cell {
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #ffffff;
+  height: 40px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.board-cell:hover {
+  background-color: #444;
+  transform: scale(1.05);
+}
+
+button {
+  margin: 10px;
+  padding: 15px 30px;
+  font-size: 1.5em;
+  border-radius: 8px;
+  background-color: #1e88e5;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+  background-color: #1565c0;
+  transform: scale(1.05);
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2.5em;
   }
-  to {
-    transform: rotate(360deg);
+
+  h2 {
+    font-size: 2em;
+  }
+
+  .board {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .board-cell {
+    font-size: 12px;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+  }
+
+  .player-slider input[type=range] {
+    width: 100%;
+  }
+
+  .score-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .score-item button {
+    padding: 5px 10px;
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 400px) {
+  h1 {
+    font-size: 2em;
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  .board-cell {
+    font-size: 10px;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 1em;
+  }
+
+  .score-item button {
+    padding: 4px 8px;
+    font-size: 0.9em;
   }
 }
