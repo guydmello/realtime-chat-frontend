@@ -223,6 +223,13 @@ button:hover {
   font-size: 1.2em;
 }
 
+.header-image {
+  max-width: 80%;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+
 /* Mobile view adjustments */
 @media (max-width: 600px) {
   .start-screen, .player-role-screen, .score-screen, .board-screen, .reveal-screen, .lobby-screen {
@@ -345,3 +352,4 @@ button:hover {
     font-size: 0.9em;
   }
 }
+
