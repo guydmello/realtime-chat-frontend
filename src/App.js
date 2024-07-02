@@ -201,7 +201,7 @@ function App() {
     <div className="App">
       {screen === "start" && (
         <div className="start-screen">
-          <h1>Moley</h1>
+          <img src={`${process.env.PUBLIC_URL}/moleynbg.png`} alt="The Moley Game" className="header-image" />
           <input
             type="text"
             placeholder="Enter your username"
