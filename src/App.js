@@ -89,6 +89,7 @@ function App() {
   const [lobbyCode, setLobbyCode] = useState("");
   const [inputLobbyCode, setInputLobbyCode] = useState("");
   const [myRole, setMyRole] = useState("");
+  const [myWord, setMyWord] = useState("");
 
   useEffect(() => {
     socket.on('updatePlayers', (players) => {
@@ -102,21 +103,21 @@ function App() {
 
     socket.on('gameStarted', ({ role, board, theme, word }) => {
       setMyRole(role);
+      setMyWord(word);
       setBoard(board);
       setTheme(theme);
-      setWord(word);
       setScreen("player-role");
     });
 
-    socket.on('gameStarted', ({ board, theme }) => {
+    socket.on('gameBoard', ({ board, theme }) => {
       setBoard(board);
       setTheme(theme);
-      setScreen("player-role");
     });
 
     return () => {
       socket.off('updatePlayers');
       socket.off('gameStarted');
+      socket.off('gameBoard');
     };
   }, []);
 
@@ -233,11 +234,11 @@ function App() {
       )}
       {screen === "player-role" && (
         <div className="player-role-screen">
-          <h1>{players[currentPlayerIndex].name}, are you ready for your turn?</h1>
+          <h1>{players[currentPlayerIndex]?.name}, are you ready for your turn?</h1>
           {readyToProceed && (
             <h2>
               {showRole ? (
-                myRole === 'mole' ? 'You are the mole.' : `The word is '${word}'.`
+                myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`
               ) : (
                 <button onClick={handleRevealRole}>Reveal Role</button>
               )}
@@ -265,7 +266,7 @@ function App() {
       )}
       {screen === "reveal" && (
         <div className="reveal-screen">
-          <h1>The word was: {word}</h1>
+          <h1>The word was: {myWord}</h1>
           {Object.entries(roles).map(([id, role]) => {
             const player = players.find(player => player.id === id);
             return (
