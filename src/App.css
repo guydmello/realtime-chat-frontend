@@ -4,15 +4,21 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   overflow: hidden; /* Prevent scrolling */
+  height: 100vh; /* Ensure the body takes full height */
+  width: 100vw; /* Ensure the body takes full width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .App {
   text-align: center;
-  padding: 20px;
-  height: 100vh; /* Ensure the app takes full height */
+  width: 100%;
+  height: 100%; /* Ensure the app takes full height */
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden; /* Prevent internal scrolling */
 }
 
 .start-screen, .player-role-screen, .score-screen, .board-screen, .reveal-screen, .lobby-screen {
@@ -26,7 +32,6 @@ body {
   background: #1c1c1c;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  margin: 20px;
 }
 
 .header-image {
@@ -120,8 +125,7 @@ button:hover {
   border-radius: 8px;
   font-size: 1em;
   color: #ffffff;
-  height: 100px; /* Set a fixed height for the board cells */
-  width: 100%; /* Ensure cells take full width */
+  aspect-ratio: 1; /* Ensure cells are square */
   transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
   padding: 10px;
   border: 1px solid #444;
@@ -271,7 +275,8 @@ button:hover {
 
   .board-cell {
     font-size: 0.9em;
-    height: 50px;
+    height: auto; /* Ensure cells take the right height */
+    aspect-ratio: 1; /* Ensure cells are square */
   }
 
   .player-slider input[type="range"] {
@@ -333,7 +338,8 @@ button:hover {
 
   .board-cell {
     font-size: 0.8em;
-    height: 40px;
+    height: auto; /* Ensure cells take the right height */
+    aspect-ratio: 1; /* Ensure cells are square */
   }
 
   .score-item {
