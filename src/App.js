@@ -45,6 +45,26 @@ function App() {
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [showRole, setShowRole] = useState(false);
   const [lobbyCode, setLobbyCode] = useState("");
+  const [inputLobbyCode, setInputLobbyCode] = useState("");
+
+  useEffect(() => {
+    socket.on('updatePlayers', (players) => {
+      setPlayers(players);
+    });
+
+    socket.on('gameStarted', ({ roles, board, theme, word }) => {
+      setRoles(roles);
+      setBoard(board);
+      setTheme(theme);
+      setWord(word);
+      setScreen("player-role");
+    });
+
+    return () => {
+      socket.off('updatePlayers');
+      socket.off('gameStarted');
+    };
+  }, []);
 
   const handleCreateLobby = () => {
     socket.emit('createLobby');
@@ -54,23 +74,14 @@ function App() {
     });
   };
 
-  const handleJoinLobby = (lobbyCode) => {
-    socket.emit('joinLobby', lobbyCode);
-    socket.on('updatePlayers', (players) => {
-      setPlayers(players);
-    });
+  const handleJoinLobby = () => {
+    socket.emit('joinLobby', inputLobbyCode);
+    setLobbyCode(inputLobbyCode);
     setScreen("lobby");
   };
 
   const handleStartGame = () => {
     socket.emit('startGame', lobbyCode);
-    socket.on('gameStarted', ({ roles, board, theme, word }) => {
-      setRoles(roles);
-      setBoard(board);
-      setTheme(theme);
-      setWord(word);
-      setScreen("player-role");
-    });
   };
 
   const handleNextTurn = () => {
@@ -119,10 +130,10 @@ function App() {
   };
 
   const resetGame = () => {
-    const [randomTheme, words] = Object.entries(themes)[Math.floor(Math.random() * Object.entries(themes).length)];
+    const [randomTheme, words] = getRandomThemeAndWords();
     setTheme(randomTheme);
     setThemeWords(words);
-    setWord(words[Math.floor(Math.random() * words.length)]);
+    setWord(getRandomWord(words));
     setBoard(createBoard(words));
     setRoles(assignRoles(players));
     setCurrentPlayerIndex(0);
@@ -141,10 +152,10 @@ function App() {
             <input
               type="text"
               placeholder="Enter lobby code"
-              value={lobbyCode}
-              onChange={(e) => setLobbyCode(e.target.value)}
+              value={inputLobbyCode}
+              onChange={(e) => setInputLobbyCode(e.target.value)}
             />
-            <button onClick={() => handleJoinLobby(lobbyCode)}>Join Lobby</button>
+            <button onClick={handleJoinLobby}>Join Lobby</button>
           </div>
         </div>
       )}
