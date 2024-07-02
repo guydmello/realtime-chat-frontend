@@ -7,7 +7,6 @@ body {
 
 .App {
   text-align: center;
-  font-family: Arial, sans-serif;
   padding: 20px;
 }
 
@@ -21,13 +20,50 @@ body {
 }
 
 h1 {
-  font-size: 4em;
+  font-size: 3em;
   margin-bottom: 20px;
 }
 
 h2 {
-  font-size: 2.5em;
+  font-size: 2em;
   margin-bottom: 20px;
+}
+
+input[type="text"] {
+  padding: 10px;
+  font-size: 1.2em;
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;
+}
+
+button {
+  margin: 10px;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  border-radius: 8px;
+  background-color: #1e88e5;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+  background-color: #1565c0;
+  transform: scale(1.05);
+}
+
+.lobby-buttons, .score-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lobby-buttons input[type="text"] {
+  margin-bottom: 10px;
 }
 
 .player-slider, .score-list, .board, .reveal-list {
@@ -35,11 +71,12 @@ h2 {
 }
 
 .player-slider label {
-  font-size: 1.5em;
+  font-size: 1.2em;
 }
 
-.player-slider input[type=range] {
-  width: 80%;
+.player-slider input[type="range"] {
+  width: 100%;
+  max-width: 300px;
   margin-top: 10px;
 }
 
@@ -57,9 +94,9 @@ h2 {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 1em;
   color: #ffffff;
-  height: 40px;
+  height: 60px;
   transition: background-color 0.3s, transform 0.3s;
 }
 
@@ -68,34 +105,32 @@ h2 {
   transform: scale(1.05);
 }
 
-button {
-  margin: 10px;
-  padding: 15px 30px;
-  font-size: 1.5em;
-  border-radius: 8px;
-  background-color: #1e88e5;
-  border: none;
-  cursor: pointer;
-  color: #ffffff;
-  transition: background-color 0.3s, transform 0.3s;
-}
-
-button:hover {
-  background-color: #1565c0;
-  transform: scale(1.05);
-}
-
 .hidden {
   display: none;
 }
 
+/* Mobile view adjustments */
 @media (max-width: 600px) {
+  .start-screen, .player-role-screen, .score-screen, .board-screen, .reveal-screen {
+    padding: 10px;
+  }
+
   h1 {
     font-size: 2.5em;
   }
 
   h2 {
-    font-size: 2em;
+    font-size: 1.8em;
+  }
+
+  input[type="text"] {
+    font-size: 1em;
+    padding: 8px;
+  }
+
+  button {
+    padding: 12px 24px;
+    font-size: 1em;
   }
 
   .board {
@@ -104,15 +139,11 @@ button:hover {
   }
 
   .board-cell {
-    font-size: 12px;
+    font-size: 0.9em;
+    height: 50px;
   }
 
-  button {
-    padding: 10px 20px;
-    font-size: 1.2em;
-  }
-
-  .player-slider input[type=range] {
+  .player-slider input[type="range"] {
     width: 100%;
   }
 
@@ -125,11 +156,12 @@ button:hover {
   }
 
   .score-item button {
-    padding: 5px 10px;
-    font-size: 1em;
+    padding: 8px 16px;
+    font-size: 0.9em;
   }
 }
 
+/* Very small mobile view adjustments */
 @media (max-width: 400px) {
   h1 {
     font-size: 2em;
@@ -139,17 +171,23 @@ button:hover {
     font-size: 1.5em;
   }
 
-  .board-cell {
-    font-size: 10px;
+  input[type="text"] {
+    font-size: 0.9em;
+    padding: 6px;
   }
 
   button {
-    padding: 8px 16px;
-    font-size: 1em;
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
+
+  .board-cell {
+    font-size: 0.8em;
+    height: 40px;
   }
 
   .score-item button {
-    padding: 4px 8px;
-    font-size: 0.9em;
+    padding: 6px 12px;
+    font-size: 0.8em;
   }
 }
