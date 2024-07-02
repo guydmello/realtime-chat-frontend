@@ -89,32 +89,37 @@ function App() {
   const [myWord, setMyWord] = useState("");
 
   useEffect(() => {
-    socket.on('updatePlayers', (players) => {
+    const handleUpdatePlayers = (players) => {
       setPlayers(players);
       const initialScores = players.reduce((acc, player) => {
         acc[player.name] = 0;
         return acc;
       }, {});
       setScores(initialScores);
-    });
+    };
 
-    socket.on('gameStarted', ({ role, board, theme, word }) => {
+    const handleGameStarted = ({ role, board, theme, word }) => {
       setMyRole(role);
       setMyWord(word);
       setBoard(board);
       setTheme(theme);
       setScreen("role-display");
-    });
+    };
 
-    socket.on('gameBoard', ({ board, theme }) => {
+    const handleGameBoard = ({ board, theme }) => {
       setBoard(board);
       setTheme(theme);
-    });
+      setScreen("board");
+    };
+
+    socket.on('updatePlayers', handleUpdatePlayers);
+    socket.on('gameStarted', handleGameStarted);
+    socket.on('gameBoard', handleGameBoard);
 
     return () => {
-      socket.off('updatePlayers');
-      socket.off('gameStarted');
-      socket.off('gameBoard');
+      socket.off('updatePlayers', handleUpdatePlayers);
+      socket.off('gameStarted', handleGameStarted);
+      socket.off('gameBoard', handleGameBoard);
     };
   }, []);
 
@@ -136,17 +141,21 @@ function App() {
     socket.emit('startGame', lobbyCode);
   };
 
-  const handleProceed = () => {
-    setScreen("add-points");
+  const handleProceedToBoard = () => {
+    setScreen("board");
   };
 
-  const handleNextRound = () => {
-    socket.emit('nextRound', lobbyCode);
+  const handleProceedToPoints = () => {
+    setScreen("add-points");
   };
 
   const handleAddPoints = () => {
     socket.emit('updateScores', { lobbyCode, scores });
-    handleNextRound();
+    setScreen("reveal");
+  };
+
+  const handleNextRound = () => {
+    socket.emit('nextRound', lobbyCode);
   };
 
   const handleAddPoint = (playerName) => {
@@ -202,7 +211,7 @@ function App() {
         <div className="role-display-screen">
           <h1>Your Role</h1>
           <h2>{myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`}</h2>
-          <button onClick={handleProceed}>Next</button>
+          <button onClick={handleProceedToBoard}>Next</button>
         </div>
       )}
       {screen === "board" && (
@@ -219,7 +228,7 @@ function App() {
               </React.Fragment>
             ))}
           </div>
-          <button onClick={handleProceed}>Next</button>
+          <button onClick={handleProceedToPoints}>Next</button>
         </div>
       )}
       {screen === "reveal" && (
@@ -248,7 +257,7 @@ function App() {
               </div>
             </div>
           ))}
-          <button onClick={handleAddPoints}>Next</button>
+          <button onClick={handleNextRound}>Start New Game</button>
         </div>
       )}
     </div>
