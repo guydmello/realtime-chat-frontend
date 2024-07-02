@@ -83,6 +83,7 @@ function App() {
   const [word, setWord] = useState("");
   const [scores, setScores] = useState({});
   const [screen, setScreen] = useState("start");
+  const [showRole, setShowRole] = useState(false);
   const [lobbyCode, setLobbyCode] = useState("");
   const [inputLobbyCode, setInputLobbyCode] = useState("");
   const [myRole, setMyRole] = useState("");
@@ -103,7 +104,7 @@ function App() {
       setMyWord(word);
       setBoard(board);
       setTheme(theme);
-      setScreen("role-display");
+      setScreen("player-role");
     });
 
     socket.on('gameBoard', ({ board, theme }) => {
@@ -136,17 +137,21 @@ function App() {
     socket.emit('startGame', lobbyCode);
   };
 
+  const handleRevealRole = () => {
+    setShowRole(true);
+  };
+
   const handleProceed = () => {
     setScreen("board");
   };
 
-  const handleNextRound = () => {
-    socket.emit('nextRound', lobbyCode);
+  const handleAddPoints = () => {
+    setScreen("add-points");
   };
 
-  const handleAddPoints = () => {
-    socket.emit('updateScores', { lobbyCode, scores });
-    handleNextRound();
+  const handleSkipPoints = () => {
+    setScreen("player-role");
+    resetGame();
   };
 
   const handleAddPoint = (playerName) => {
@@ -170,7 +175,8 @@ function App() {
     setWord(getRandomWord(words));
     setBoard(createBoard(words));
     setRoles(assignRoles(players));
-    setScreen("role-display");
+    setScreen("player-role");
+    setShowRole(false);
   };
 
   return (
@@ -208,11 +214,15 @@ function App() {
           <button onClick={handleStartGame}>Start Game</button>
         </div>
       )}
-      {screen === "role-display" && (
-        <div className="role-display-screen">
-          <h1>Your Role</h1>
-          <h2>{myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`}</h2>
-          <button onClick={handleProceed}>Next</button>
+      {screen === "player-role" && (
+        <div className="player-role-screen">
+          <h1>{username}, are you ready for your turn?</h1>
+          {showRole ? (
+            <h2>{myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`}</h2>
+          ) : (
+            <button onClick={handleRevealRole}>Reveal Role</button>
+          )}
+          <button onClick={handleProceed}>Proceed</button>
         </div>
       )}
       {screen === "board" && (
@@ -258,6 +268,7 @@ function App() {
               </div>
             </div>
           ))}
+          <button onClick={handleSkipPoints}>Skip</button>
           <button onClick={resetGame}>Next</button>
         </div>
       )}
