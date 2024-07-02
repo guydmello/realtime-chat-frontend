@@ -168,6 +168,10 @@ function App() {
     }));
   };
 
+  const handleNewGame = () => {
+    socket.emit('newGame', lobbyCode);
+  };
+
   const resetGame = () => {
     const [randomTheme, words] = getRandomThemeAndWords();
     setTheme(randomTheme);
@@ -269,7 +273,7 @@ function App() {
             </div>
           ))}
           <button onClick={handleSkipPoints}>Skip</button>
-          <button onClick={resetGame}>Next</button>
+          <button onClick={handleNewGame}>New Game</button>
         </div>
       )}
     </div>
