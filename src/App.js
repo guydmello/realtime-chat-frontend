@@ -191,6 +191,11 @@ function App() {
     setShowRole(false);
   };
 
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(lobbyCode);
+    alert("Lobby code copied to clipboard!");
+  };
+
   return (
     <div className="App">
       {screen === "start" && (
@@ -216,13 +221,19 @@ function App() {
       )}
       {screen === "lobby" && (
         <div className="lobby-screen">
-          <h1>Lobby Code: {lobbyCode}</h1>
+          <h1>Lobby</h1>
+          <div className="lobby-code">
+            <span>Lobby Code: {lobbyCode}</span>
+            <button onClick={handleCopyCode}>Copy</button>
+          </div>
           <h2>Players:</h2>
-          <ul>
+          <div className="player-list">
             {players.map((player, index) => (
-              <li key={index}>{player.name}</li>
+              <div className="player-item" key={index}>
+                <span>{player.name}</span>
+              </div>
             ))}
-          </ul>
+          </div>
           <button onClick={handleStartGame}>Start Game</button>
         </div>
       )}
