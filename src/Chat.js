@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:5000'); // Your backend server URL
+const socket = io('https://realtime-chat-backend-fmoq.onrender.com'); // Your backend server URL
 
 const Chat = () => {
   const [message, setMessage] = useState('');
