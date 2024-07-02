@@ -3,11 +3,16 @@ body {
   color: #ffffff;
   margin: 0;
   font-family: Arial, sans-serif;
+  overflow: hidden; /* Prevent scrolling */
 }
 
 .App {
   text-align: center;
   padding: 20px;
+  height: 100vh; /* Ensure the app takes full height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .start-screen, .player-role-screen, .score-screen, .board-screen, .reveal-screen, .lobby-screen {
@@ -15,12 +20,19 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  width: 100%;
+  max-width: 400px; /* Limit the width for better alignment */
   padding: 20px;
   background: #1c1c1c;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   margin: 20px;
+}
+
+.header-image {
+  max-width: 80%;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 h1 {
@@ -108,10 +120,12 @@ button:hover {
   border-radius: 8px;
   font-size: 1em;
   color: #ffffff;
-  height: 60px;
+  height: 100px; /* Set a fixed height for the board cells */
+  width: 100%; /* Ensure cells take full width */
   transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
   padding: 10px;
   border: 1px solid #444;
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
 .board-cell:hover {
@@ -222,13 +236,6 @@ button:hover {
 .player-item span {
   font-size: 1.2em;
 }
-
-.header-image {
-  max-width: 80%;
-  height: auto;
-  margin-bottom: 20px;
-}
-
 
 /* Mobile view adjustments */
 @media (max-width: 600px) {
