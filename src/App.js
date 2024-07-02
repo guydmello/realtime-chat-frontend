@@ -192,15 +192,16 @@ function App() {
   };
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(lobbyCode);
-    alert("Lobby code copied to clipboard!");
+    navigator.clipboard.writeText(lobbyCode)
+      .then(() => alert("Lobby code copied to clipboard!"))
+      .catch(() => alert("Failed to copy lobby code"));
   };
 
   return (
     <div className="App">
       {screen === "start" && (
         <div className="start-screen">
-          <h1>Holey Moley</h1>
+          <h1>Moley</h1>
           <input
             type="text"
             placeholder="Enter your username"
