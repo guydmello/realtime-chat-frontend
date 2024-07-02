@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import './App.css';
 
-const socket = io('http://localhost:5000');
+const socket = io('https://realtime-chat-backend-fmoq.onrender.com'); // Replace with your Render backend URL
 
 const themes = {
-  // ... your themes object
+  // Your themes object here
 };
 
 const assignRoles = (players) => {
@@ -22,8 +22,17 @@ const createBoard = (themeWords) => {
   return Array.from({ length: 4 }, (_, rowIndex) => shuffledWords.slice(rowIndex * 4, (rowIndex + 1) * 4));
 };
 
+const getRandomThemeAndWords = () => {
+  const entries = Object.entries(themes);
+  const [randomTheme, words] = entries[Math.floor(Math.random() * entries.length)];
+  return [randomTheme, words];
+};
+
+const getRandomWord = (words) => {
+  return words[Math.floor(Math.random() * words.length)];
+};
+
 function App() {
-  const [numPlayers, setNumPlayers] = useState(3);
   const [players, setPlayers] = useState([]);
   const [roles, setRoles] = useState({});
   const [theme, setTheme] = useState("");
@@ -32,27 +41,10 @@ function App() {
   const [word, setWord] = useState("");
   const [scores, setScores] = useState({});
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-  const [screen, setScreen] = useState("start"); // 'start', 'lobby', 'player-role', 'board', 'reveal', 'add-points'
+  const [screen, setScreen] = useState("start");
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [showRole, setShowRole] = useState(false);
   const [lobbyCode, setLobbyCode] = useState("");
-
-  useEffect(() => {
-    if (screen === "player-role") {
-      const initialPlayers = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
-      setPlayers(initialPlayers);
-      setRoles(assignRoles(initialPlayers));
-      const [randomTheme, words] = Object.entries(themes)[Math.floor(Math.random() * Object.entries(themes).length)];
-      setTheme(randomTheme);
-      setThemeWords(words);
-      setWord(words[Math.floor(Math.random() * words.length)]);
-      setBoard(createBoard(words));
-      setScores(initialPlayers.reduce((acc, player) => {
-        acc[player] = 0;
-        return acc;
-      }, {}));
-    }
-  }, [numPlayers, screen]);
 
   const handleCreateLobby = () => {
     socket.emit('createLobby');
@@ -72,9 +64,11 @@ function App() {
 
   const handleStartGame = () => {
     socket.emit('startGame', lobbyCode);
-    socket.on('gameStarted', (roles, board) => {
+    socket.on('gameStarted', ({ roles, board, theme, word }) => {
       setRoles(roles);
       setBoard(board);
+      setTheme(theme);
+      setWord(word);
       setScreen("player-role");
     });
   };
@@ -133,25 +127,6 @@ function App() {
     setRoles(assignRoles(players));
     setCurrentPlayerIndex(0);
     setScreen("player-role");
-    setReadyToProceed(false);
-    setShowRole(false);
-  };
-
-  const handlePlayerCountChange = (event) => {
-    setNumPlayers(event.target.value);
-  };
-
-  const handleResetPlayers = () => {
-    setNumPlayers(3);
-    setPlayers([]);
-    setRoles({});
-    setTheme("");
-    setThemeWords([]);
-    setBoard([]);
-    setWord("");
-    setScores({});
-    setCurrentPlayerIndex(0);
-    setScreen("start");
     setReadyToProceed(false);
     setShowRole(false);
   };
@@ -242,12 +217,6 @@ function App() {
           ))}
           <button onClick={handleSkipPoints}>Skip</button>
           <button onClick={resetGame}>Next</button>
-          <button
-            onClick={handleResetPlayers}
-            style={{ position: 'absolute', bottom: '10px', right: '10px' }}
-          >
-            Reset Players and Game
-          </button>
         </div>
       )}
     </div>
