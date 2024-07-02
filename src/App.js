@@ -137,7 +137,7 @@ function App() {
   };
 
   const handleProceed = () => {
-    setScreen("board");
+    setScreen("add-points");
   };
 
   const handleNextRound = () => {
@@ -161,16 +161,6 @@ function App() {
       ...prevScores,
       [playerName]: Math.max(prevScores[playerName] - 1, 0)
     }));
-  };
-
-  const resetGame = () => {
-    const [randomTheme, words] = getRandomThemeAndWords();
-    setTheme(randomTheme);
-    setThemeWords(words);
-    setWord(getRandomWord(words));
-    setBoard(createBoard(words));
-    setRoles(assignRoles(players));
-    setScreen("role-display");
   };
 
   return (
@@ -229,7 +219,7 @@ function App() {
               </React.Fragment>
             ))}
           </div>
-          <button onClick={handleAddPoints}>Next</button>
+          <button onClick={handleProceed}>Next</button>
         </div>
       )}
       {screen === "reveal" && (
@@ -258,7 +248,7 @@ function App() {
               </div>
             </div>
           ))}
-          <button onClick={resetGame}>Next</button>
+          <button onClick={handleAddPoints}>Next</button>
         </div>
       )}
     </div>
