@@ -201,7 +201,7 @@ function App() {
     <div className="App">
       {screen === "start" && (
         <div className="start-screen">
-          <img src={moleynbg.png} alt="Moley" className="header-image" />
+          <h1>Moley</h1>
           <input
             type="text"
             placeholder="Enter your username"
