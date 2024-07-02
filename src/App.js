@@ -140,13 +140,13 @@ function App() {
     setScreen("board");
   };
 
-  const handleAddPoints = () => {
-    setScreen("add-points");
+  const handleNextRound = () => {
+    socket.emit('nextRound', lobbyCode);
   };
 
-  const handleSkipPoints = () => {
-    setScreen("role-display");
-    resetGame();
+  const handleAddPoints = () => {
+    socket.emit('updateScores', { lobbyCode, scores });
+    handleNextRound();
   };
 
   const handleAddPoint = (playerName) => {
@@ -258,7 +258,6 @@ function App() {
               </div>
             </div>
           ))}
-          <button onClick={handleSkipPoints}>Skip</button>
           <button onClick={resetGame}>Next</button>
         </div>
       )}
