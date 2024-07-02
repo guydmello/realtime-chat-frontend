@@ -89,37 +89,32 @@ function App() {
   const [myWord, setMyWord] = useState("");
 
   useEffect(() => {
-    const handleUpdatePlayers = (players) => {
+    socket.on('updatePlayers', (players) => {
       setPlayers(players);
       const initialScores = players.reduce((acc, player) => {
         acc[player.name] = 0;
         return acc;
       }, {});
       setScores(initialScores);
-    };
+    });
 
-    const handleGameStarted = ({ role, board, theme, word }) => {
+    socket.on('gameStarted', ({ role, board, theme, word }) => {
       setMyRole(role);
       setMyWord(word);
       setBoard(board);
       setTheme(theme);
       setScreen("role-display");
-    };
+    });
 
-    const handleGameBoard = ({ board, theme }) => {
+    socket.on('gameBoard', ({ board, theme }) => {
       setBoard(board);
       setTheme(theme);
-      setScreen("board");
-    };
-
-    socket.on('updatePlayers', handleUpdatePlayers);
-    socket.on('gameStarted', handleGameStarted);
-    socket.on('gameBoard', handleGameBoard);
+    });
 
     return () => {
-      socket.off('updatePlayers', handleUpdatePlayers);
-      socket.off('gameStarted', handleGameStarted);
-      socket.off('gameBoard', handleGameBoard);
+      socket.off('updatePlayers');
+      socket.off('gameStarted');
+      socket.off('gameBoard');
     };
   }, []);
 
@@ -141,21 +136,17 @@ function App() {
     socket.emit('startGame', lobbyCode);
   };
 
-  const handleProceedToBoard = () => {
+  const handleProceed = () => {
     setScreen("board");
-  };
-
-  const handleProceedToPoints = () => {
-    setScreen("add-points");
-  };
-
-  const handleAddPoints = () => {
-    socket.emit('updateScores', { lobbyCode, scores });
-    setScreen("reveal");
   };
 
   const handleNextRound = () => {
     socket.emit('nextRound', lobbyCode);
+  };
+
+  const handleAddPoints = () => {
+    socket.emit('updateScores', { lobbyCode, scores });
+    handleNextRound();
   };
 
   const handleAddPoint = (playerName) => {
@@ -170,6 +161,16 @@ function App() {
       ...prevScores,
       [playerName]: Math.max(prevScores[playerName] - 1, 0)
     }));
+  };
+
+  const resetGame = () => {
+    const [randomTheme, words] = getRandomThemeAndWords();
+    setTheme(randomTheme);
+    setThemeWords(words);
+    setWord(getRandomWord(words));
+    setBoard(createBoard(words));
+    setRoles(assignRoles(players));
+    setScreen("role-display");
   };
 
   return (
@@ -211,7 +212,7 @@ function App() {
         <div className="role-display-screen">
           <h1>Your Role</h1>
           <h2>{myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`}</h2>
-          <button onClick={handleProceedToBoard}>Next</button>
+          <button onClick={handleProceed}>Next</button>
         </div>
       )}
       {screen === "board" && (
@@ -228,7 +229,7 @@ function App() {
               </React.Fragment>
             ))}
           </div>
-          <button onClick={handleProceedToPoints}>Next</button>
+          <button onClick={handleAddPoints}>Next</button>
         </div>
       )}
       {screen === "reveal" && (
@@ -257,7 +258,7 @@ function App() {
               </div>
             </div>
           ))}
-          <button onClick={handleNextRound}>Start New Game</button>
+          <button onClick={resetGame}>Next</button>
         </div>
       )}
     </div>
