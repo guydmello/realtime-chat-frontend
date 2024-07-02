@@ -149,9 +149,8 @@ function App() {
     setScreen("add-points");
   };
 
-  const handleSkipPoints = () => {
-    setScreen("player-role");
-    resetGame();
+  const handleShowReveal = () => {
+    setScreen("reveal");
   };
 
   const handleAddPoint = (playerName) => {
@@ -243,7 +242,7 @@ function App() {
               </React.Fragment>
             ))}
           </div>
-          <button onClick={handleAddPoints}>Next</button>
+          <button onClick={handleShowReveal}>Next</button>
         </div>
       )}
       {screen === "reveal" && (
@@ -257,7 +256,7 @@ function App() {
               </div>
             );
           })}
-          <button onClick={handleAddPoints}>Next</button>
+          <button onClick={handleAddPoints}>Proceed to Points</button>
         </div>
       )}
       {screen === "add-points" && (
@@ -272,7 +271,6 @@ function App() {
               </div>
             </div>
           ))}
-          <button onClick={handleSkipPoints}>Skip</button>
           <button onClick={handleNewGame}>New Game</button>
         </div>
       )}
