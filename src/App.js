@@ -112,10 +112,15 @@ function App() {
       setTheme(theme);
     });
 
+    socket.on('updateScores', (newScores) => {
+      setScores(newScores);
+    });
+
     return () => {
       socket.off('updatePlayers');
       socket.off('gameStarted');
       socket.off('gameBoard');
+      socket.off('updateScores');
     };
   }, []);
 
@@ -154,17 +159,21 @@ function App() {
   };
 
   const handleAddPoint = (playerName) => {
-    setScores((prevScores) => ({
-      ...prevScores,
-      [playerName]: prevScores[playerName] + 1
-    }));
+    const newScores = {
+      ...scores,
+      [playerName]: scores[playerName] + 1
+    };
+    setScores(newScores);
+    socket.emit('updateScores', { lobbyCode, scores: newScores });
   };
 
   const handleDeductPoint = (playerName) => {
-    setScores((prevScores) => ({
-      ...prevScores,
-      [playerName]: Math.max(prevScores[playerName] - 1, 0)
-    }));
+    const newScores = {
+      ...scores,
+      [playerName]: Math.max(scores[playerName] - 1, 0)
+    };
+    setScores(newScores);
+    socket.emit('updateScores', { lobbyCode, scores: newScores });
   };
 
   const handleNewGame = () => {
