@@ -86,6 +86,10 @@ button:hover {
   margin: 20px;
   grid-template-columns: repeat(4, 1fr); /* 4 columns for desktop */
   grid-template-rows: repeat(3, 1fr); /* 3 rows for desktop */
+  padding: 10px;
+  background: #1c1c1c;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .board-cell {
@@ -97,12 +101,15 @@ button:hover {
   font-size: 1em;
   color: #ffffff;
   height: 60px;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  padding: 10px;
+  border: 1px solid #444;
 }
 
 .board-cell:hover {
   background-color: #444;
   transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .hidden {
