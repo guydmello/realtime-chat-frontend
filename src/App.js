@@ -82,9 +82,7 @@ function App() {
   const [board, setBoard] = useState([]);
   const [word, setWord] = useState("");
   const [scores, setScores] = useState({});
-  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [screen, setScreen] = useState("start");
-  const [readyToProceed, setReadyToProceed] = useState(false);
   const [showRole, setShowRole] = useState(false);
   const [lobbyCode, setLobbyCode] = useState("");
   const [inputLobbyCode, setInputLobbyCode] = useState("");
@@ -139,26 +137,12 @@ function App() {
     socket.emit('startGame', lobbyCode);
   };
 
-  const handleNextTurn = () => {
-    if (!readyToProceed) {
-      setReadyToProceed(true);
-    } else {
-      if (currentPlayerIndex + 1 >= players.length) {
-        setScreen("board");
-      } else {
-        setCurrentPlayerIndex((prevIndex) => prevIndex + 1);
-        setReadyToProceed(false);
-        setShowRole(false);
-      }
-    }
-  };
-
   const handleRevealRole = () => {
     setShowRole(true);
   };
 
-  const handleReveal = () => {
-    setScreen("reveal");
+  const handleProceed = () => {
+    setScreen("board");
   };
 
   const handleAddPoints = () => {
@@ -191,9 +175,7 @@ function App() {
     setWord(getRandomWord(words));
     setBoard(createBoard(words));
     setRoles(assignRoles(players));
-    setCurrentPlayerIndex(0);
     setScreen("player-role");
-    setReadyToProceed(false);
     setShowRole(false);
   };
 
@@ -234,17 +216,13 @@ function App() {
       )}
       {screen === "player-role" && (
         <div className="player-role-screen">
-          <h1>{players[currentPlayerIndex]?.name}, are you ready for your turn?</h1>
-          {readyToProceed && (
-            <h2>
-              {showRole ? (
-                myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`
-              ) : (
-                <button onClick={handleRevealRole}>Reveal Role</button>
-              )}
-            </h2>
+          <h1>{username}, are you ready for your turn?</h1>
+          {showRole ? (
+            <h2>{myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`}</h2>
+          ) : (
+            <button onClick={handleRevealRole}>Reveal Role</button>
           )}
-          <button onClick={handleNextTurn}>Next</button>
+          <button onClick={handleProceed}>Proceed</button>
         </div>
       )}
       {screen === "board" && (
@@ -261,7 +239,7 @@ function App() {
               </React.Fragment>
             ))}
           </div>
-          <button onClick={handleReveal}>Next</button>
+          <button onClick={handleAddPoints}>Next</button>
         </div>
       )}
       {screen === "reveal" && (
