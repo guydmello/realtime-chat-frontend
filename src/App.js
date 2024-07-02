@@ -93,6 +93,11 @@ function App() {
   useEffect(() => {
     socket.on('updatePlayers', (players) => {
       setPlayers(players);
+      const initialScores = players.reduce((acc, player) => {
+        acc[player.name] = 0;
+        return acc;
+      }, {});
+      setScores(initialScores);
     });
 
     socket.on('gameStarted', ({ role, board, theme, word }) => {
@@ -164,17 +169,17 @@ function App() {
     resetGame();
   };
 
-  const handleAddPoint = (player) => {
+  const handleAddPoint = (playerName) => {
     setScores((prevScores) => ({
       ...prevScores,
-      [player.name]: prevScores[player.name] + 1
+      [playerName]: prevScores[playerName] + 1
     }));
   };
 
-  const handleDeductPoint = (player) => {
+  const handleDeductPoint = (playerName) => {
     setScores((prevScores) => ({
       ...prevScores,
-      [player.name]: Math.max(prevScores[player.name] - 1, 0)
+      [playerName]: Math.max(prevScores[playerName] - 1, 0)
     }));
   };
 
@@ -279,8 +284,8 @@ function App() {
             <div className="score-item" key={name}>
               <span>{name}: {score}</span>
               <div>
-                <button onClick={() => handleAddPoint(players.find(player => player.name === name))}>Add Point</button>
-                <button onClick={() => handleDeductPoint(players.find(player => player.name === name))}>Deduct Point</button>
+                <button onClick={() => handleAddPoint(name)}>Add Point</button>
+                <button onClick={() => handleDeductPoint(name)}>Deduct Point</button>
               </div>
             </div>
           ))}
