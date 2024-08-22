@@ -228,7 +228,6 @@ button:hover {
   margin-bottom: 20px;
 }
 
-
 /* Mobile view adjustments */
 @media (max-width: 600px) {
   .start-screen, .player-role-screen, .score-screen, .board-screen, .reveal-screen, .lobby-screen {

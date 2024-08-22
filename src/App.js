@@ -3,6 +3,8 @@ import io from 'socket.io-client';
 import './App.css';
 
 const socket = io('https://realtime-chat-backend-fmoq.onrender.com'); // Replace with your Render backend URL
+// const socket = io('http://localhost:5000'); // Use localhost when running locally
+
 
 const themes = {
   fruits: ["apple", "banana", "cherry", "date", "fig", "grape", "orange", "pear", "melon", "berry", "kiwi", "peach"],
@@ -50,8 +52,10 @@ const themes = {
 };
 
 const assignRoles = (players) => {
-  const numMoles = Math.floor(Math.random() * 2) + 1; // Always between 1 and 2 moles
-  const roles = Array(numMoles).fill("mole").concat(Array(players.length - numMoles).fill("detective"));
+  const roles = ["mole"]; // Always have 1 mole
+  const detectiveCount = players.length - 1;
+  roles.push(...Array(detectiveCount).fill("detective"));
+  
   return roles.sort(() => Math.random() - 0.5).reduce((acc, role, index) => {
     acc[players[index].id] = role;
     return acc;
@@ -88,10 +92,12 @@ function App() {
   const [inputLobbyCode, setInputLobbyCode] = useState("");
   const [myRole, setMyRole] = useState("");
   const [myWord, setMyWord] = useState("");
+  const [isHost, setIsHost] = useState(false);
 
   useEffect(() => {
-    socket.on('updatePlayers', (players) => {
+    socket.on('updatePlayers', ({ players, hostId }) => {
       setPlayers(players);
+      setIsHost(hostId);
       const initialScores = players.reduce((acc, player) => {
         acc[player.name] = 0;
         return acc;
@@ -116,18 +122,34 @@ function App() {
       setScores(newScores);
     });
 
+    socket.on('proceedToBoard', () => {
+      setScreen("board");
+    });
+
+    socket.on('proceedToReveal', () => {
+      setScreen("reveal");
+    });
+
+    socket.on('proceedToAddPoints', () => {
+      setScreen("add-points");
+    });
+
     return () => {
       socket.off('updatePlayers');
       socket.off('gameStarted');
       socket.off('gameBoard');
       socket.off('updateScores');
+      socket.off('proceedToBoard');
+      socket.off('proceedToReveal');
+      socket.off('proceedToAddPoints');
     };
   }, []);
 
   const handleCreateLobby = () => {
     socket.emit('createLobby', username);
-    socket.on('lobbyCreated', (lobbyCode) => {
+    socket.on('lobbyCreated', ({ lobbyCode, hostId }) => {
       setLobbyCode(lobbyCode);
+      setIsHost(hostId); // Now all players will know the host ID
       setScreen("lobby");
     });
   };
@@ -139,7 +161,11 @@ function App() {
   };
 
   const handleStartGame = () => {
-    socket.emit('startGame', lobbyCode);
+    if (isHost === socket.id) {
+      socket.emit('startGame', lobbyCode);
+    } else {
+      alert("Only the host can start the game.");
+    }
   };
 
   const handleRevealRole = () => {
@@ -147,15 +173,27 @@ function App() {
   };
 
   const handleProceed = () => {
-    setScreen("board");
-  };
-
-  const handleAddPoints = () => {
-    setScreen("add-points");
+    if (isHost === socket.id) {
+      socket.emit('proceedToBoard', lobbyCode);
+    } else {
+      alert("Only the host can proceed.");
+    }
   };
 
   const handleShowReveal = () => {
-    setScreen("reveal");
+    if (isHost === socket.id) {
+      socket.emit('proceedToReveal', lobbyCode);
+    } else {
+      alert("Only the host can proceed to the reveal.");
+    }
+  };
+
+  const handleAddPoints = () => {
+    if (isHost === socket.id) {
+      socket.emit('proceedToAddPoints', lobbyCode);
+    } else {
+      alert("Only the host can add points.");
+    }
   };
 
   const handleAddPoint = (playerName) => {
@@ -177,7 +215,11 @@ function App() {
   };
 
   const handleNewGame = () => {
-    socket.emit('newGame', lobbyCode);
+    if (isHost === socket.id) {
+      socket.emit('newGame', lobbyCode);
+    } else {
+      alert("Only the host can start a new game.");
+    }
   };
 
   const resetGame = () => {
@@ -230,12 +272,23 @@ function App() {
           <h2>Players:</h2>
           <div className="player-list">
             {players.map((player, index) => (
-              <div className="player-item" key={index}>
-                <span>{player.name}</span>
+              <div
+                key={index}
+                className="player-item"
+                style={{
+                  backgroundColor: player.id === isHost ? "#FFD700" : player.id === socket.id ? "#1E90FF" : "#444",
+                  color: player.id === isHost || player.id === socket.id ? "#000" : "#fff",
+                  borderColor: player.id === isHost ? "#FFA500" : "transparent"
+                }}
+              >
+                <span>
+                  {player.name} {player.id === isHost && "(Host)"}
+                  {player.id === socket.id && " (You)"}
+                </span>
               </div>
             ))}
           </div>
-          <button onClick={handleStartGame}>Start Game</button>
+          {isHost === socket.id && <button onClick={handleStartGame}>Start Game</button>}
         </div>
       )}
       {screen === "player-role" && (
@@ -246,7 +299,7 @@ function App() {
           ) : (
             <button onClick={handleRevealRole}>Reveal Role</button>
           )}
-          <button onClick={handleProceed}>Proceed</button>
+          {isHost === socket.id && <button onClick={handleProceed}>Proceed</button>}
         </div>
       )}
       {screen === "board" && (
@@ -263,21 +316,23 @@ function App() {
               </React.Fragment>
             ))}
           </div>
-          <button onClick={handleShowReveal}>Next</button>
+          {isHost === socket.id && <button onClick={handleShowReveal}>Next</button>}
         </div>
       )}
       {screen === "reveal" && (
         <div className="reveal-screen">
           <h1>The word was: {myWord}</h1>
-          {Object.entries(roles).map(([id, role]) => {
-            const player = players.find(player => player.id === id);
-            return (
-              <div key={id}>
-                {player.name} was a {role}
-              </div>
-            );
-          })}
-          <button onClick={handleAddPoints}>Proceed to Points</button>
+          <div className="reveal-list">
+            {Object.entries(roles).map(([id, role]) => {
+              const player = players.find(player => player.id === id);
+              return (
+                <div key={id} className="player-item">
+                  {player.name} was a {role}
+                </div>
+              );
+            })}
+          </div>
+          {isHost === socket.id && <button onClick={handleAddPoints}>Proceed to Points</button>}
         </div>
       )}
       {screen === "add-points" && (
@@ -286,13 +341,15 @@ function App() {
           {Object.entries(scores).map(([name, score]) => (
             <div className="score-item" key={name}>
               <span>{name}: {score}</span>
-              <div>
-                <button onClick={() => handleAddPoint(name)}>Add Point</button>
-                <button onClick={() => handleDeductPoint(name)}>Deduct Point</button>
-              </div>
+              {isHost === socket.id && (
+                <div>
+                  <button onClick={() => handleAddPoint(name)}>Add Point</button>
+                  <button onClick={() => handleDeductPoint(name)}>Deduct Point</button>
+                </div>
+              )}
             </div>
           ))}
-          <button onClick={handleNewGame}>New Game</button>
+          {isHost === socket.id && <button onClick={handleNewGame}>New Game</button>}
         </div>
       )}
     </div>
