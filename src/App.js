@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import './App.css';
+import HelpModal from './HelpModal';  // Import the HelpModal component
+
 
 const socket = io('https://realtime-chat-backend-fmoq.onrender.com'); // Replace with your Render backend URL
 // const socket = io('http://localhost:5000'); // Use localhost when running locally
@@ -93,6 +95,7 @@ function App() {
   const [myRole, setMyRole] = useState("");
   const [myWord, setMyWord] = useState("");
   const [isHost, setIsHost] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);  // State for managing the HelpModal
 
   useEffect(() => {
     socket.on('updatePlayers', ({ players, hostId }) => {
@@ -239,8 +242,20 @@ function App() {
       .catch(() => alert("Failed to copy lobby code"));
   };
 
+  const handleHelpClick = () => {
+    setIsHelpOpen(true); // Open the Help modal
+  };
+
+  const handleCloseHelp = () => {
+    setIsHelpOpen(false); // Close the Help modal
+  };
+
   return (
     <div className="App">
+      <button className="help-button" onClick={handleHelpClick}>Help</button> {/* Help Button */}
+      
+      <HelpModal isOpen={isHelpOpen} onClose={handleCloseHelp} /> {/* Render HelpModal if open */}
+
       {screen === "start" && (
         <div className="start-screen">
           <img src={`${process.env.PUBLIC_URL}/moleynbg.png`} alt="The Moley Game" className="header-image" />
@@ -295,7 +310,7 @@ function App() {
         <div className="player-role-screen">
           <h1>{username}, are you ready for your turn?</h1>
           {showRole ? (
-            <h2>{myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`}</h2>
+            <h2 className="role-reveal">{myRole === 'mole' ? 'You are the mole.' : `The word is '${myWord}'.`}</h2>
           ) : (
             <button onClick={handleRevealRole}>Reveal Role</button>
           )}
@@ -326,8 +341,19 @@ function App() {
             {Object.entries(roles).map(([id, role]) => {
               const player = players.find(player => player.id === id);
               return (
-                <div key={id} className="player-item">
-                  {player.name} was a {role}
+                <div key={id} className="player-item" style={{
+                  backgroundColor: role === 'mole' ? "#FFD700" : "#1E90FF",
+                  color: "#000",
+                  borderColor: role === 'mole' ? "#FFA500" : "transparent",
+                  marginBottom: "10px",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  textAlign: "left",
+                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)"
+                }}>
+                  <span>
+                    {player.name} was a {role}
+                  </span>
                 </div>
               );
             })}

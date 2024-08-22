@@ -8,6 +8,7 @@ body {
 .App {
   text-align: center;
   padding: 20px;
+  position: relative; /* Added for help button positioning */
 }
 
 .start-screen, .player-role-screen, .score-screen, .board-screen, .reveal-screen, .lobby-screen {
@@ -21,6 +22,7 @@ body {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   margin: 20px;
+  position: relative; /* Added for help button positioning */
 }
 
 h1 {
@@ -62,6 +64,23 @@ button {
 button:hover {
   background-color: #1565c0;
   transform: scale(1.05);
+}
+
+/* Help button positioning */
+.help-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10; /* Ensure it's on top */
+  background-color: #1e88e5;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 8px 16px;
+}
+
+.help-button:hover {
+  background-color: #1565c0;
 }
 
 .lobby-buttons, .score-list {
@@ -222,10 +241,23 @@ button:hover {
 .player-item span {
   font-size: 1.2em;
 }
+
 .header-image {
   max-width: 80%;
   height: auto;
   margin-bottom: 20px;
+}
+
+/* Role reveal styling */
+.role-reveal {
+  font-size: 2em;
+  color: #D3D3D3; /* Light grayish white */
+  margin-bottom: 20px;
+  text-align: center;
+  background: none; /* No gradient background */
+  -webkit-background-clip: border-box; /* Ensures the color is applied directly */
+  -webkit-text-fill-color: #D3D3D3; /* Directly fills the text with the color */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Optional: Adds a subtle shadow for better visibility */
 }
 
 /* Mobile view adjustments */
@@ -350,3 +382,4 @@ button:hover {
     font-size: 0.9em;
   }
 }
+
